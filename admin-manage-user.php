@@ -79,7 +79,7 @@ if(isset($_POST['add_new_employee'])){
                   <div class="form-group">
                     <label class="control-label col-sm-4">Email</label>
                     <div class="col-sm-6">
-                      <input type="text" placeholder="Enter Employee Email" name="em_email" class="form-control input-custom" required>
+                      <input type="email" placeholder="Enter Employee Email" name="em_email" class="form-control input-custom" required>
                     </div>
                   </div>
                  
