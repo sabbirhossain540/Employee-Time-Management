@@ -18,6 +18,14 @@ if($user_role != 1){
 
 if(isset($_GET['delete_user'])){
   $action_id = $_GET['admin_id'];
+
+  $task_sql = "DELETE FROM task_info WHERE t_user_id = $action_id";
+  $delete_task = $obj_admin->db->prepare($task_sql);
+  $delete_task->execute();
+
+  $attendance_sql = "DELETE FROM attendance_info WHERE atn_user_id = $action_id";
+  $delete_attendance = $obj_admin->db->prepare($attendance_sql);
+  $delete_attendance->execute();
   
   $sql = "DELETE FROM tbl_admin WHERE user_id = :id";
   $sent_po = "admin-manage-user.php";
@@ -140,6 +148,10 @@ if(isset($_POST['add_new_employee'])){
                 $sql = "SELECT * FROM tbl_admin WHERE user_role = 2 ORDER BY user_id DESC";
                 $info = $obj_admin->manage_all_info($sql);
                 $serial  = 1;
+                $num_row = $info->rowCount();
+                  if($num_row==0){
+                    echo '<tr><td colspan="7">No Data found</td></tr>';
+                  }
                 while( $row = $info->fetch(PDO::FETCH_ASSOC) ){
               ?>
                 <tr>

@@ -22,7 +22,7 @@ include("include/login_header.php");
 	<div class="col-md-4 col-md-offset-3">
 		<div class="well" style="position:relative;top:20vh;">
 			<form class="form-horizontal form-custom-login" action="" method="POST">
-			  <div class="form-heading" style="background: blue;">
+			  <div class="form-heading" style="background: orange;">
 			    <h2 class="text-center">Please Change your password</h2>
 			  </div>
 			  <div class="login-gap"></div>

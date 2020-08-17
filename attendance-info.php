@@ -62,7 +62,7 @@ include("include/header.php");
                 <div class="btn-group">
                   <form method="post" role="form" action="">
                     <input type="hidden" name="user_id" value="<?php echo $user_id; ?>">
-                    <button type="submit" name="add_punch_in" class="btn btn-primary btn-lg rounded" >Punch In</button>
+                    <button type="submit" name="add_punch_in" class="btn btn-primary btn-lg rounded" >Clock In</button>
                   </form>
                   
                 </div>
@@ -143,7 +143,7 @@ include("include/header.php");
                     <form method="post" role="form" action="">
                       <input type="hidden" name="punch_in_time" value="<?php echo $row['in_time']; ?>">
                       <input type="hidden" name="aten_id" value="<?php echo $row['aten_id']; ?>">
-                      <button type="submit" name="add_punch_out" class="btn btn-danger btn-xs rounded" >Punch Out</button>
+                      <button type="submit" name="add_punch_out" class="btn btn-danger btn-xs rounded" >Clock Out</button>
                     </form>
                   </td>
                 <?php } ?>

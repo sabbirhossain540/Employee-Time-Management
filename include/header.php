@@ -40,7 +40,7 @@
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-      <a class="navbar-brand" href="task-info.php">ETM</a>
+      <a class="navbar-brand" href="task-info.php"><span style="color: yellow; font-weight: bold;">ETM</span></a>
     </div>
 
     <?php
