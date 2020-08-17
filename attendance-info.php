@@ -24,17 +24,18 @@ if(isset($_GET['delete_attendance'])){
 
 
 if(isset($_POST['add_punch_in'])){
-    $obj_admin->add_punch_in($_POST);
+   $info = $obj_admin->add_punch_in($_POST);
 }
 
 if(isset($_POST['add_punch_out'])){
     $obj_admin->add_punch_out($_POST);
 }
 
-$page_name="Attendance Management";
+
+$page_name="Attendance";
 include("include/header.php");
 
-
+//$info = "Hello World";
 ?>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 
@@ -44,7 +45,6 @@ include("include/header.php");
     <div class="row">
       <div class="col-md-12">
         <div class="well well-custom">
-          <div class="gap"></div>
           <div class="row">
             <div class="col-md-8 ">
               <div class="btn-group">

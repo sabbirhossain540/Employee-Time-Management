@@ -10,7 +10,7 @@ if ($user_id == NULL || $security_key == NULL) {
     header('Location: index.php');
 }
 
-// check admin or sales man
+// check admin
 $user_role = $_SESSION['user_role'];
 
 $task_id = $_GET['task_id'];
@@ -33,7 +33,7 @@ $row = $info->fetch(PDO::FETCH_ASSOC);
 
 ?>
 
-<!--modal for customer add-->
+<!--modal for employee add-->
 
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 
@@ -67,6 +67,15 @@ $row = $info->fetch(PDO::FETCH_ASSOC);
 				                      </tr>
 				                      <tr>
 				                        <td>Assign To</td><td><?php echo $row['fullname']; ?></td>
+				                      </tr>
+				                      <tr>
+				                        <td>Status</td><td><?php  if($row['status'] == 1){
+											                        echo "In Progress";
+											                    }elseif($row['status'] == 2){
+											                       echo "Completed";
+											                    }else{
+											                      echo "In Complete";
+											                    } ?></td>
 				                      </tr>
 
 				                    </tbody>

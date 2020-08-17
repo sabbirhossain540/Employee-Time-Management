@@ -35,19 +35,14 @@ class Admin_Class
     public function admin_login_check($data) {
         
         $upass = $this->test_form_input_data(md5($data['admin_password']));
-		$uemail = $this->test_form_input_data($data['admin_email']);
-
-		//var_dump($uemail);exit();
-
+		$username = $this->test_form_input_data($data['username']);
         try
        {
-          $stmt = $this->db->prepare("SELECT * FROM tbl_admin WHERE email=:uname AND password=:upass LIMIT 1");
-          $stmt->execute(array(':uname'=>$uemail, ':upass'=>$upass));
+          $stmt = $this->db->prepare("SELECT * FROM tbl_admin WHERE username=:uname AND password=:upass LIMIT 1");
+          $stmt->execute(array(':uname'=>$username, ':upass'=>$upass));
           $userRow=$stmt->fetch(PDO::FETCH_ASSOC);
-          //var_dump($userRow);exit();
           if($stmt->rowCount() > 0)
           {
-          		//var_dump($userRow);exit();
           		session_start();
 	            $_SESSION['admin_id'] = $userRow['user_id'];
 	            $_SESSION['name'] = $userRow['fullname'];
@@ -56,7 +51,7 @@ class Admin_Class
 	            $_SESSION['temp_password'] = $userRow['temp_password'];
 
           		if($userRow['temp_password'] == null){
-	                header('Location: dashboard.php');
+	                header('Location: task-info.php');
           		}else{
           			header('Location: changePasswordForEmployee.php');
           		}
@@ -91,10 +86,24 @@ class Admin_Class
 				$update_user->bindparam(':x', $final_password);
 				$update_user->bindparam(':y', $temp_password);
 				$update_user->bindparam(':id', $user_id);
-				
 				$update_user->execute();
 
-				$this->admin_logout();
+
+
+				$stmt = $this->db->prepare("SELECT * FROM tbl_admin WHERE user_id=:id LIMIT 1");
+		          $stmt->execute(array(':id'=>$user_id));
+		          $userRow=$stmt->fetch(PDO::FETCH_ASSOC);
+
+		          if($stmt->rowCount() > 0){
+			          		session_start();
+				            $_SESSION['admin_id'] = $userRow['user_id'];
+				            $_SESSION['name'] = $userRow['fullname'];
+				            $_SESSION['security_key'] = 'rewsgf@%^&*nmghjjkh';
+				            $_SESSION['user_role'] = $userRow['user_role'];
+				            $_SESSION['temp_password'] = $userRow['temp_password'];
+
+				            header('Location: task-info.php');
+			          }
 
 			}catch (PDOException $e) {
 				echo $e->getMessage();
@@ -131,20 +140,40 @@ class Admin_Class
 		$user_password = $this->test_form_input_data(md5($temp_password));
 		$user_role = 2;
 		try{
-			$add_user = $this->db->prepare("INSERT INTO tbl_admin (fullname, username, email, password, temp_password, user_role) VALUES (:x, :y, :z, :a, :b, :c) ");
+			$sqlEmail = "SELECT email FROM tbl_admin WHERE email = '$user_email' ";
+			$query_result_for_email = $this->manage_all_info($sqlEmail);
+			$total_email = $query_result_for_email->rowCount();
 
-			$add_user->bindparam(':x', $user_fullname);
-			$add_user->bindparam(':y', $user_username);
-			$add_user->bindparam(':z', $user_email);
-			$add_user->bindparam(':a', $user_password);
-			$add_user->bindparam(':b', $temp_password);
-			$add_user->bindparam(':c', $user_role);
+			$sqlUsername = "SELECT username FROM tbl_admin WHERE username = '$user_username' ";
+			$query_result_for_username = $this->manage_all_info($sqlUsername);
+			$total_username = $query_result_for_username->rowCount();
 
-			$add_user->execute();
+			if($total_email != 0 && $total_username != 0){
+				$message = "Email and Password both are already taken";
+            	return $message;
 
-			$_SESSION['add_new_user'] = 'add_new_user';
+			}elseif($total_username != 0){
+				$message = "Username Already Taken";
+            	return $message;
 
-			//header('Location: product-all.php');
+			}elseif($total_email != 0){
+				$message = "Email Already Taken";
+            	return $message;
+
+			}else{
+				$add_user = $this->db->prepare("INSERT INTO tbl_admin (fullname, username, email, password, temp_password, user_role) VALUES (:x, :y, :z, :a, :b, :c) ");
+
+				$add_user->bindparam(':x', $user_fullname);
+				$add_user->bindparam(':y', $user_username);
+				$add_user->bindparam(':z', $user_email);
+				$add_user->bindparam(':a', $user_password);
+				$add_user->bindparam(':b', $temp_password);
+				$add_user->bindparam(':c', $user_role);
+
+				$add_user->execute();
+			}
+
+
 		}catch (PDOException $e) {
 			echo $e->getMessage();
 		}
@@ -154,22 +183,22 @@ class Admin_Class
 /* ---------update_user_data----------*/
 
 	public function update_user_data($data, $id){
-		$admin_name  = $this->test_form_input_data($data['admin_name']);
-		$admin_email = $this->test_form_input_data($data['admin_email']);
-		$admin_contact = $this->test_form_input_data($data['admin_contact']);
+		$user_fullname  = $this->test_form_input_data($data['em_fullname']);
+		$user_username = $this->test_form_input_data($data['em_username']);
+		$user_email = $this->test_form_input_data($data['em_email']);
 		try{
-			$update_user = $this->db->prepare("UPDATE tbl_admin SET admin_name = :x, admin_email = :y, admin_contact = :z WHERE admin_id = :id ");
+			$update_user = $this->db->prepare("UPDATE tbl_admin SET fullname = :x, username = :y, email = :z WHERE user_id = :id ");
 
-			$update_user->bindparam(':x', $admin_name);
-			$update_user->bindparam(':y', $admin_email);
-			$update_user->bindparam(':z', $admin_contact);
+			$update_user->bindparam(':x', $user_fullname);
+			$update_user->bindparam(':y', $user_username);
+			$update_user->bindparam(':z', $user_email);
 			$update_user->bindparam(':id', $id);
 			
 			$update_user->execute();
 
 			$_SESSION['update_user'] = 'update_user';
 
-			header('Location: admin-manage-salesman.php');
+			header('Location: admin-manage-user.php');
 		}catch (PDOException $e) {
 			echo $e->getMessage();
 		}
@@ -179,20 +208,19 @@ class Admin_Class
 /* ------------update_admin_data-------------------- */
 
 	public function update_admin_data($data, $id){
-		$admin_name  = $this->test_form_input_data($data['admin_name']);
-		$admin_email = $this->test_form_input_data($data['admin_email']);
-		$admin_contact = $this->test_form_input_data($data['admin_contact']);
-		try{
-			$update_user = $this->db->prepare("UPDATE tbl_admin SET admin_name = :x, admin_email = :y, admin_contact = :z WHERE admin_id = :id ");
+		$user_fullname  = $this->test_form_input_data($data['em_fullname']);
+		$user_username = $this->test_form_input_data($data['em_username']);
+		$user_email = $this->test_form_input_data($data['em_email']);
 
-			$update_user->bindparam(':x', $admin_name);
-			$update_user->bindparam(':y', $admin_email);
-			$update_user->bindparam(':z', $admin_contact);
+		try{
+			$update_user = $this->db->prepare("UPDATE tbl_admin SET fullname = :x, username = :y, email = :z WHERE user_id = :id ");
+
+			$update_user->bindparam(':x', $user_fullname);
+			$update_user->bindparam(':y', $user_username);
+			$update_user->bindparam(':z', $user_email);
 			$update_user->bindparam(':id', $id);
 			
 			$update_user->execute();
-
-			$_SESSION['update_user'] = 'update_user';
 
 			header('Location: manage-admin.php');
 		}catch (PDOException $e) {
@@ -204,19 +232,19 @@ class Admin_Class
 /* ------update_user_password------------------*/
 	
 	public function update_user_password($data, $id){
-		$admin_password  = $this->test_form_input_data(md5($data['admin_password']));
+		$employee_password  = $this->test_form_input_data(md5($data['employee_password']));
 		
 		try{
-			$update_user_password = $this->db->prepare("UPDATE tbl_admin SET admin_password = :x WHERE admin_id = :id ");
+			$update_user_password = $this->db->prepare("UPDATE tbl_admin SET password = :x WHERE user_id = :id ");
 
-			$update_user_password->bindparam(':x', $admin_password);
+			$update_user_password->bindparam(':x', $employee_password);
 			$update_user_password->bindparam(':id', $id);
 			
 			$update_user_password->execute();
 
 			$_SESSION['update_user_pass'] = 'update_user_pass';
 
-			header('Location: admin-manage-salesman.php');
+			header('Location: admin-manage-user.php');
 		}catch (PDOException $e) {
 			echo $e->getMessage();
 		}
@@ -237,7 +265,7 @@ class Admin_Class
 
 			// old password matching check 
 
-			$sql = "SELECT * FROM tbl_admin WHERE admin_id = '$id' AND admin_password = '$admin_old_password' ";
+			$sql = "SELECT * FROM tbl_admin WHERE user_id = '$id' AND password = '$admin_old_password' ";
 
 			$query_result = $this->manage_all_info($sql);
 
@@ -254,12 +282,12 @@ class Admin_Class
 
 			$password_length = strlen($admin_raw_password);
 
-			if($password_length < 8){
-				$all_error .= '<br>'."Password length must be more then 8 character";
+			if($password_length < 6){
+				$all_error .= '<br>'."Password length must be more then 6 character";
 			}
 
 			if(empty($all_error)){
-				$update_admin_password = $this->db->prepare("UPDATE tbl_admin SET admin_password = :x WHERE admin_id = :id ");
+				$update_admin_password = $this->db->prepare("UPDATE tbl_admin SET password = :x WHERE user_id = :id ");
 
 				$update_admin_password->bindparam(':x', $admin_new_password);
 				$update_admin_password->bindparam(':id', $id);
@@ -268,7 +296,7 @@ class Admin_Class
 
 				$_SESSION['update_user_pass'] = 'update_user_pass';
 
-				header('Location: admin-manage-salesman.php');
+				header('Location: admin-manage-user.php');
 
 			}else{
 				return $all_error;
@@ -279,6 +307,9 @@ class Admin_Class
 			echo $e->getMessage();
 		}
 	}
+
+
+
 
 	/* =================Task Related===================== */
 
@@ -315,6 +346,7 @@ class Admin_Class
 			$task_description = $this->test_form_input_data($data['task_description']);
 			$t_start_time = $this->test_form_input_data($data['t_start_time']);
 			$t_end_time = $this->test_form_input_data($data['t_end_time']);
+			$status = $this->test_form_input_data($data['status']);
 
 			if($user_role == 1){
 				$assign_to = $this->test_form_input_data($data['assign_to']);
@@ -327,13 +359,14 @@ class Admin_Class
 			}
 
 			try{
-				$update_task = $this->db->prepare("UPDATE task_info SET t_title = :x, t_description = :y, t_start_time = :z, t_end_time = :a, t_user_id = :b WHERE task_id = :id ");
+				$update_task = $this->db->prepare("UPDATE task_info SET t_title = :x, t_description = :y, t_start_time = :z, t_end_time = :a, t_user_id = :b, status = :c WHERE task_id = :id ");
 
 				$update_task->bindparam(':x', $task_title);
 				$update_task->bindparam(':y', $task_description);
 				$update_task->bindparam(':z', $t_start_time);
 				$update_task->bindparam(':a', $t_end_time);
 				$update_task->bindparam(':b', $assign_to);
+				$update_task->bindparam(':c', $status);
 				$update_task->bindparam(':id', $task_id);
 
 				$update_task->execute();
@@ -360,9 +393,8 @@ class Admin_Class
 			$add_attendance = $this->db->prepare("INSERT INTO attendance_info (atn_user_id, in_time) VALUES ('$user_id', '$punch_in_time') ");
 			$add_attendance->execute();
 
-			//$_SESSION['add_bank'] = 'add_bank';
-
 			header('Location: attendance-info.php');
+
 		}catch (PDOException $e) {
 			echo $e->getMessage();
 		}
@@ -410,58 +442,6 @@ class Admin_Class
 			$delete_data->execute();
 
 			header('Location: '.$sent_po);
-		}catch (PDOException $e) {
-			echo $e->getMessage();
-		}
-	}
-
-/* ------------------sale_your_product-------------------  */
-
-	
-
-	public function sale_your_product($data){
-		// data insert   
-		$product_code  = $this->test_form_input_data($data['product_code']);
-		$sale_price = $this->test_form_input_data($data['sale_price']);
-		$product_quantity = $this->test_form_input_data($data['product_quantity']);
-
-		$total_price = $sale_price * $product_quantity;
-
-		try{
-
-			// sale product
-			$add_sale = $this->db->prepare("INSERT INTO tbl_sales_product (product_code, sale_price, product_quantity) VALUES (:x, :y, :z) ");
-			$add_sale->bindparam(':x', $product_code);
-			$add_sale->bindparam(':y', $total_price);
-			$add_sale->bindparam(':z', $product_quantity);
-		    $add_sale->execute();
-
-			$sql = "SELECT * FROM tbl_product WHERE product_code = '$product_code'";
-			$receive_data = $this->manage_all_info($sql);
-			$row = $receive_data->fetch(PDO::FETCH_ASSOC);
-			$previous_quantity = $row['product_quantity'];
-			$product_id = $row['product_id'];
-			$product_code = $row['product_code'];
-			$product_name = $row['product_name'];
-			$new_quantity = $previous_quantity - $product_quantity;
-			
-
-			$update_product = $this->db->prepare("UPDATE tbl_product SET product_quantity= :x WHERE  product_id = :id ");
-			$update_product->bindparam(':x', $new_quantity);
-			$update_product->bindparam(':id', $product_id);
-			$update_product->execute(); 
-
-			$sales_person = 'sales person';
-			$add_income = $this->db->prepare("INSERT INTO tbl_income_source (income_source, income_description, responsible_person, income_amount) VALUES (:x, :y, :z, :c) ");
-
-			$add_income->bindparam(':x', $product_code);
-			$add_income->bindparam(':y', $product_name);
-			$add_income->bindparam(':z', $sales_person);
-			$add_income->bindparam(':c', $total_price);
-
-			$add_income->execute();
-
-			header('Location: manage-sale.php');
 		}catch (PDOException $e) {
 			echo $e->getMessage();
 		}

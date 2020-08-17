@@ -10,7 +10,7 @@ if ($user_id == NULL || $security_key == NULL) {
     header('Location: index.php');
 }
 
-// check admin or sales man
+// check admin
 $user_role = $_SESSION['user_role'];
 
 $task_id = $_GET['task_id'];
@@ -30,7 +30,7 @@ $row = $info->fetch(PDO::FETCH_ASSOC);
 
 ?>
 
-<!--modal for customer add-->
+<!--modal for employee add-->
 
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 <?php include('ems_header.php'); ?>
@@ -89,6 +89,17 @@ $row = $info->fetch(PDO::FETCH_ASSOC);
 			                      </select>
 			                    </div>
 			                   
+			                  </div>
+
+			                   <div class="form-group">
+			                    <label class="control-label col-sm-5">Status</label>
+			                    <div class="col-sm-7">
+			                      <select class="form-control" name="status" id="status">
+			                      	<option value="0" <?php if($row['status'] == 0){ ?>selected <?php } ?>>In Complete</option>
+			                      	<option value="1" <?php if($row['status'] == 1){ ?>selected <?php } ?>>In Progress</option>
+			                      	<option value="2" <?php if($row['status'] == 2){ ?>selected <?php } ?>>Completed</option>
+			                      </select>
+			                    </div>
 			                  </div>
                             
                             <div class="form-group">

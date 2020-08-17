@@ -9,17 +9,18 @@ if ($user_id == NULL || $security_key == NULL) {
     header('Location: index.php');
 }
 
-// check admin or sales man
+// check admin 
 $user_role = $_SESSION['user_role'];
-if ($user_role != 1) {
-  header('Location: sale-now.php');
+if($user_role != 1){
+  header('Location: task-info.php');
 }
 
-if(isset($_GET['delete_salesman'])){
+
+if(isset($_GET['delete_user'])){
   $action_id = $_GET['admin_id'];
   
-  $sql = "DELETE FROM tbl_admin WHERE admin_id = :id";
-  $sent_po = "admin-manage-salesman.php";
+  $sql = "DELETE FROM tbl_admin WHERE user_id = :id";
+  $sent_po = "admin-manage-user.php";
   $obj_admin->delete_data_by_this_method($sql,$action_id,$sent_po);
 }
 
@@ -27,17 +28,18 @@ $page_name="Admin";
 include("include/header.php");
 
 if(isset($_POST['add_new_employee'])){
-  $obj_admin->add_new_user($_POST);
+  $error = $obj_admin->add_new_user($_POST);
 }
 
 ?>
 
 
 
-<!--modal for customer add-->
+<!--modal for employee add-->
   <!-- Modal -->
   <div class="modal fade" id="myModal" role="dialog">
     <div class="modal-dialog">
+
     
       <!-- Modal content-->
       <div class="modal-content">
@@ -48,6 +50,9 @@ if(isset($_POST['add_new_employee'])){
         <div class="modal-body">
           <div class="row">
             <div class="col-md-12">
+              <?php if(isset($error)){ ?>
+                <h5 class="alert alert-danger"><?php echo $error; ?></h5>
+                <?php } ?>
               <form role="form" action="" method="post" autocomplete="off">
                 <div class="form-horizontal">
 
@@ -92,20 +97,29 @@ if(isset($_POST['add_new_employee'])){
   </div>
 
 
-<div class='multi-action'>
-  <button class="action-button" data-toggle="modal" data-target="#myModal"><span class='glyphicon glyphicon-plus plus-rotate'></span></button>
-</div>
 
-<!--modal for customer add-->
-
+<!--modal for employee add-->
+<?php include('ems_header.php'); ?>
 
 
     <div class="row">
       <div class="col-md-12">
+        <div class="row">
+            
         <div class="well well-custom">
+          <?php if(isset($error)){ ?>
+          <script type="text/javascript">
+            $('#myModal').modal('show');
+          </script>
+          <?php } ?>
+            <?php if($user_role == 1){ ?>
+                <div class="btn-group">
+                  <button class="btn btn-success btn-menu" data-toggle="modal" data-target="#myModal">Add Employee</button>
+                </div>
+              <?php } ?>
           <ul class="nav nav-tabs nav-justified nav-tabs-custom">
             <li><a href="manage-admin.php">Manage Admin</a></li>
-            <li class="active"><a href="admin-manage-user.php">Manage Salesman</a></li>
+            <li class="active"><a href="admin-manage-user.php">Manage Employee</a></li>
           </ul>
           <div class="gap"></div>
           <div class="table-responsive">
@@ -123,10 +137,9 @@ if(isset($_POST['add_new_employee'])){
               <tbody>
 
               <?php 
-                $sql = "SELECT * FROM tbl_admin WHERE user_role = 2";
+                $sql = "SELECT * FROM tbl_admin WHERE user_role = 2 ORDER BY user_id DESC";
                 $info = $obj_admin->manage_all_info($sql);
                 $serial  = 1;
-                $total_expense = 0.00;
                 while( $row = $info->fetch(PDO::FETCH_ASSOC) ){
               ?>
                 <tr>
@@ -136,7 +149,7 @@ if(isset($_POST['add_new_employee'])){
                   <td><?php echo $row['username']; ?></td>
                   <td><?php echo $row['temp_password']; ?></td>
                   
-                  <td><a title="Update Employee" href="update-employee.php?admin_id=<?php echo $row['user_id']; ?>"><span class="glyphicon glyphicon-edit"></span></a>&nbsp;&nbsp;<a title="Delete" href="?delete_salesman=delete_salesman&admin_id=<?php echo $row['user_id']; ?>" onclick=" return check_delete();"><span class="glyphicon glyphicon-trash"></span></a></td>
+                  <td><a title="Update Employee" href="update-employee.php?admin_id=<?php echo $row['user_id']; ?>"><span class="glyphicon glyphicon-edit"></span></a>&nbsp;&nbsp;<a title="Delete" href="?delete_user=delete_user&admin_id=<?php echo $row['user_id']; ?>" onclick=" return check_delete();"><span class="glyphicon glyphicon-trash"></span></a></td>
                 </tr>
                 
               <?php  } ?>

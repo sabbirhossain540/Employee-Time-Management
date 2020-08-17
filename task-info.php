@@ -10,12 +10,8 @@ if ($user_id == NULL || $security_key == NULL) {
     header('Location: index.php');
 }
 
-// check admin or sales man
+// check admin
 $user_role = $_SESSION['user_role'];
-
-
-
-
 
 
 if(isset($_GET['delete_task'])){
@@ -26,25 +22,19 @@ if(isset($_GET['delete_task'])){
   $obj_admin->delete_data_by_this_method($sql,$action_id,$sent_po);
 }
 
-
 if(isset($_POST['add_task_post'])){
     $obj_admin->add_new_task($_POST);
 }
 
-
-
-$page_name="Task Info";
+$page_name="Task_Info";
 include("include/header.php");
+include('ems_header.php');
 
 
 ?>
 
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
-<?php include('ems_header.php'); ?>
 
-
-
-<!--modal for account add-->
   <!-- Modal -->
   <div class="modal fade" id="myModal" role="dialog">
     <div class="modal-dialog add-category-modal">
@@ -121,7 +111,6 @@ include("include/header.php");
     </div>
   </div>
 
-<!--modal for account add-->
 
 
 
@@ -143,9 +132,6 @@ include("include/header.php");
                   <button class="btn btn-success btn-menu" data-toggle="modal" data-target="#myModal">Add Task</button>
                 </div>
               <?php } ?>
-<!--                 <div class="btn-group">
-                  <a href="admin-banking-accounts.php" class="btn btn-success  btn-menu">Manage Account</a>
-                </div> -->
 
               </div>
 
@@ -166,6 +152,7 @@ include("include/header.php");
                   <th>Assign To</th>
                   <th>Start Time</th>
                   <th>End Time</th>
+                  <th>Status</th>
                   <th>Action</th>
                 </tr>
               </thead>
@@ -199,7 +186,17 @@ include("include/header.php");
                   <td><?php echo $row['fullname']; ?></td>
                   <td><?php echo $row['t_start_time']; ?></td>
                   <td><?php echo $row['t_end_time']; ?></td>
-                <!--  <a title="View" href="admin-banking-details.php?task_id=<?php echo $row['task_id'];?>"><span class="glyphicon glyphicon-folder-open"></span></a> -->
+                  <td>
+                    <?php  if($row['status'] == 1){
+                        echo "In Progress";
+                    }elseif($row['status'] == 2){
+                       echo "Completed";
+                    }else{
+                      echo "In Complete";
+                    } ?>
+                    
+                  </td>
+  
                  <td><a title="Update Task"  href="edit-task.php?task_id=<?php echo $row['task_id'];?>"><span class="glyphicon glyphicon-edit"></span></a>&nbsp;&nbsp;
                   <a title="View" href="task-details.php?task_id=<?php echo $row['task_id']; ?>"><span class="glyphicon glyphicon-folder-open"></span></a>&nbsp;&nbsp;
                   <?php if($user_role == 1){ ?>
@@ -234,26 +231,5 @@ include("include/footer.php");
   flatpickr('#t_end_time', {
     enableTime: true
   });
-
-</script>
-
-<script type="text/javascript">
-
-
-$( ".with-dep-both" ).attr("disabled","");
-$( ".with-only" ).attr("disabled",""); 
-
-$( "#transaction_type" ).change(function() {
-  if($( "#transaction_type" ).val()=="Withdrawal"){
-    $( ".with-dep-both" ).removeAttr("disabled","");
-    $( ".with-only" ).removeAttr("disabled","");
-  }else if($( "#transaction_type" ).val()=="Deposit"){
-    $( ".with-dep-both" ).removeAttr("disabled","");
-    $( ".with-only" ).attr("disabled",""); 
-  }else{
-    $( ".with-dep-both" ).attr("disabled","");
-    $( ".with-only" ).attr("disabled",""); 
-  }
-});
 
 </script>

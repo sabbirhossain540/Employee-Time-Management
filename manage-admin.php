@@ -9,95 +9,16 @@ if ($user_id == NULL || $security_key == NULL) {
     header('Location: index.php');
 }
 
-// check admin or sales man
+// check admin
 $user_role = $_SESSION['user_role'];
 if ($user_role != 1) {
-  header('Location: sale-now.php');
-}
-
-if(isset($_GET['delete_salesman'])){
-  $action_id = $_GET['admin_id'];
-  
-  $sql = "DELETE FROM tbl_admin WHERE admin_id = :id";
-  $sent_po = "admin-manage-salesman.php";
-  $obj_admin->delete_data_by_this_method($sql,$action_id,$sent_po);
+  header('Location: task-info.php');
 }
 
 $page_name="Admin";
 include("include/header.php");
-
-if(isset($_POST['add_new_salesman'])){
-  $obj_admin->add_new_user($_POST);
-}
-
+include('ems_header.php');
 ?>
-
-
-
-<!--modal for customer add-->
-  <!-- Modal -->
-  <div class="modal fade" id="myModal" role="dialog">
-    <div class="modal-dialog">
-    
-      <!-- Modal content-->
-      <div class="modal-content">
-        <div class="modal-header">
-          <button type="button" class="close" data-dismiss="modal">&times;</button>
-          <h2 class="modal-title text-center">Add Salesman</h2>
-        </div>
-        <div class="modal-body">
-          <div class="row">
-            <div class="col-md-12">
-              <form role="form" action="" method="post" autocomplete="off">
-                <div class="form-horizontal">
-
-                  <div class="form-group">
-                    <label class="control-label col-sm-4">Name</label>
-                    <div class="col-sm-6">
-                      <input type="text" placeholder="Enter Salesman Name" name="admin_name" list="expense" class="form-control input-custom" id="default" required>
-                    </div>
-                  </div>
-                  <div class="form-group">
-                    <label class="control-label col-sm-4">Email</label>
-                    <div class="col-sm-6">
-                      <input type="text" placeholder="Enter Salesman Email" name="admin_email" class="form-control input-custom" required>
-                    </div>
-                  </div>
-                  <div class="form-group">
-                    <label class="control-label col-sm-4">Contact No</label>
-                    <div class="col-sm-6">
-                      <input type="number" placeholder="Enter Salesman Contact" name="admin_contact" class="form-control input-custom" required>
-                    </div>
-                  </div>
-                  <div class="form-group">
-                    <label class="control-label col-sm-4">Password</label>
-                    <div class="col-sm-6">
-                      <input type="admin_password" placeholder="Enter Salesman Password" name="admin_password" class="form-control input-custom" required>
-                    </div>
-                  </div>
-                  
-                  <div class="form-group">
-                  </div>
-                  <div class="form-group">
-                    <div class="col-sm-offset-3 col-sm-3">
-                      <button type="submit" name="add_new_salesman" class="btn btn-success-custom">Add Salesman</button>
-                    </div>
-                    <div class="col-sm-3">
-                      <button type="submit" class="btn btn-danger-custom" data-dismiss="modal">Cancel</button>
-                    </div>
-                  </div>
-                </div>
-              </form> 
-            </div>
-          </div>
-
-        </div>
-      </div>
-    </div>
-  </div>
-
-
-<!--modal for customer add-->
 
 
 
@@ -106,7 +27,7 @@ if(isset($_POST['add_new_salesman'])){
         <div class="well well-custom">
           <ul class="nav nav-tabs nav-justified nav-tabs-custom">
             <li class="active"><a href="manage-admin.php">Manage Admin</a></li>
-            <li><a href="admin-manage-user.php">Manage User</a></li>
+            <li><a href="admin-manage-user.php">Manage Employee</a></li>
           </ul>
           <div class="gap"></div>
           <div class="table-responsive">

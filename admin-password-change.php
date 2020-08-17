@@ -11,15 +11,12 @@ if ($user_id == NULL || $security_key == NULL) {
     header('Location: index.php');
 }
 
-// check admin or sales man
+// check admin 
 $user_role = $_SESSION['user_role'];
-if ($user_role != 1) {
-  header('Location: sale-now.php');
-}
+
 
 $admin_id = $_GET['admin_id'];
 if(isset($_POST['btn_admin_password'])){
-
     $error = $obj_admin->admin_password_change($_POST,$admin_id);
 }
 

@@ -5,24 +5,21 @@ require 'authentication.php'; // admin authentication check
 
 // auth check
 $user_id = $_SESSION['admin_id'];
-$user_name = $_SESSION['admin_name'];
+$user_name = $_SESSION['name'];
 $security_key = $_SESSION['security_key'];
 if ($user_id == NULL || $security_key == NULL) {
     header('Location: index.php');
 }
 
-// check admin or sales man
+// check admin
 $user_role = $_SESSION['user_role'];
 if ($user_role != 1) {
-  header('Location: sale-now.php');
+  header('Location: task-info.php');
 }
+
 $admin_id = $_GET['admin_id'];
 
-if(!$admin_id){
-  header('Location: admin-manage-salesman.php');
-}
-
-if(isset($_POST['update_current_salesman'])){
+if(isset($_POST['update_current_employee'])){
 
     $obj_admin->update_user_data($_POST,$admin_id);
 }
@@ -40,9 +37,7 @@ $row = $info->fetch(PDO::FETCH_ASSOC);
         
 $page_name="Admin";
 include("include/header.php");
-
 ?>
-
 
     <div class="row">
       <div class="col-md-12">
@@ -78,7 +73,7 @@ include("include/header.php");
                             <div class="form-group">
                               <label class="control-label col-sm-2">Email</label>
                               <div class="col-sm-8">
-                                <input type="email" value="<?php echo $row['email']; ?>" placeholder="Enter employee email" name="admin_contact" class="form-control input-custom" required>
+                                <input type="email" value="<?php echo $row['email']; ?>" placeholder="Enter employee email" name="em_email" class="form-control input-custom" required>
                               </div>
                             </div>
                       
@@ -86,17 +81,17 @@ include("include/header.php");
                             </div>
                             <div class="form-group">
                               <div class="col-sm-offset-4 col-sm-3">
-                                <button type="submit" name="update_current_salesman" class="btn btn-success-custom">Update Now</button>
+                                <button type="submit" name="update_current_employee" class="btn btn-success-custom">Update Now</button>
                               </div>
                             </div>
                           </form> 
                         </div>
                         <div class="col-md-5">
-                          <button id="salesman_pass_btn" class="btn btn-primary">Change Password</button>
-                          <form action="" method="POST" id="salesman_pass_cng">
+                          <button id="emlpoyee_pass_btn" class="btn btn-primary">Change Password</button>
+                          <form action="" method="POST" id="employee_pass_cng">
                             <div class="form-group">
                               <label for="admin_password">New Password:</label>
-                              <input type="password" name="admin_password" class="form-control input-custom" id="admin_password" min="8" required>
+                              <input type="password" name="employee_password" class="form-control input-custom" id="employee_password" min="8" required>
                             </div>
                             <div class="form-group">
                               <button type="submit" name="btn_user_password" class="btn btn-success">Ok</button>
@@ -123,8 +118,8 @@ include("include/footer.php");
 
 <script type="text/javascript">
 
-$('#salesman_pass_btn').click(function(){
-    $('#salesman_pass_cng').toggle('slow');
+$('#emlpoyee_pass_btn').click(function(){
+    $('#employee_pass_cng').toggle('slow');
 });
 
 </script>

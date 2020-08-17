@@ -4,11 +4,9 @@ require 'authentication.php'; // admin authentication check
 // auth check
 if(isset($_SESSION['admin_id'])){
   $user_id = $_SESSION['admin_id'];
-  //$user_name = $_SESSION['username'];
+  $user_name = $_SESSION['name'];
   $security_key = $_SESSION['security_key'];
-  // if ($user_id != NULL && $security_key != NULL) {
-  //   header('Location: dashboard.php');
-  // }
+ 
 }
 
 if(isset($_POST['change_password_btn'])){
@@ -27,8 +25,11 @@ include("include/login_header.php");
 			  <div class="form-heading" style="background: blue;">
 			    <h2 class="text-center">Please Change your password</h2>
 			  </div>
-			  <h4 style="color:red;"><?php if(isset($info)){echo $info;}?></h4>
 			  <div class="login-gap"></div>
+			  <?php if(isset($info)){ ?>
+			  <h5 class="alert alert-danger"><?php echo $info; ?></h5>
+			  <?php } ?>
+			  
 			  <div class="form-group">
 			  	<input type="hidden" class="form-control" name="user_id" value="<?php echo $user_id; ?>" required/>
 			    <input type="password" class="form-control" placeholder="Password" name="password" required/>

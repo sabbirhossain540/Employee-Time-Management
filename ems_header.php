@@ -7,7 +7,7 @@
     <div class="well">
       <div class="row">
         <div class="col-md-12 text-center">
-          <marquee><span style="color: green;"> Hello <strong><?php echo $user_name; ?></strong>. Welcome to <strong> Employee Management System</strong></span></marquee>
+          <marquee><span style="color: green;"> Hello <strong><?php echo $user_name; ?></strong>. Welcome to <strong> Employee Time Management</strong></span></marquee>
         </div>
       </div>
     </div>
