@@ -120,11 +120,6 @@ include('ems_header.php');
         <div class="well well-custom">
           <div class="gap"></div>
           <div class="row">
-            <?php if($_SESSION['Task_msg'] != null){ ?>
-            <div class="col-md-12"><h4 class="text-center alert alert-success"><?php echo $_SESSION['Task_msg']; ?></h4></div>
-          <?php } 
-            $_SESSION['Task_msg'] = '';
-          ?>
             <div class="col-md-8">
               <div class="btn-group">
                 <?php if($user_role == 1){ ?>
